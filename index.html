@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive 3D Particle System</title>
+  <link rel="stylesheet" href="./style.css">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div id="app">
+    <canvas id="stage"></canvas>
+    <div class="ui-overlay">
+      <h1>Particle Motion</h1>
+      <div class="instructions">
+        <p> Allow camera access</p>
+        <p>✋ Move hand to guide particles</p>
+        <p>👌 Pinch to expand/contract</p>
+        <p>👆 Raise index finger for Heart</p>
+        <p>✌️ Show "V" (Victory) for Flower</p>
+        <p>🤘 Show "Rock" for Saturn</p>
+        <p>🖐 Show Open Palm for Fireworks</p>
+      </div>
+    </div>
+    <div class="loading" id="loading-text">Initializing AI & Graphics...</div>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
