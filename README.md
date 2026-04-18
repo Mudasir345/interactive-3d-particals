@@ -25,7 +25,7 @@
 
 ## �‍💻 About the Developer
 
-**Mudasir** — Creative Frontend Developer & AI Integration Specialist
+**Mudasir** — Creative Full Stack Developer & AI Integration Specialist
 
 Passionate about building **interactive web experiences** that blend cutting-edge AI with stunning visuals. This project showcases expertise in real-time computer vision, 3D graphics programming, and performance-optimized web applications.
 
