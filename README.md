@@ -6,21 +6,44 @@
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
   <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
   <img src="https://img.shields.io/badge/Responsive-4CAF50?style=for-the-badge&logo=responsive&logoColor=white" />
+  <img src="https://img.shields.io/badge/AI%2FML-FF6F00?style=for-the-badge&logo=artificial-intelligence&logoColor=white" />
 </p>
 
 <p align="center">
-  <b>A stunning 3D particle system controlled by hand gestures using AI-powered computer vision</b>
+  <b>A stunning 3D particle system controlled by hand gestures using AI-powered computer vision</b><br>
+  <em>20,000+ particles • 60 FPS • Zero Backend • Pure JavaScript</em>
+</p>
+
+<p align="center">
+  <a href="https://linkedin.com/in/mudasir345" target="_blank">👨‍💻 Developer: Mudasir</a> • 
+  <a href="https://github.com/Mudasir345" target="_blank">🚀 Open for Opportunities</a>
 </p>
 
 ![Project Screenshot](./public/ss.png)
 
 ---
 
+## �‍💻 About the Developer
+
+**Mudasir** — Creative Frontend Developer & AI Integration Specialist
+
+Passionate about building **interactive web experiences** that blend cutting-edge AI with stunning visuals. This project showcases expertise in real-time computer vision, 3D graphics programming, and performance-optimized web applications.
+
+**🎯 Skills Demonstrated:** Computer Vision • 3D Graphics • Physics Simulation • Performance Optimization • Responsive Design • AI Integration
+
+---
+
 ## 🚀 Live Demo
 
-**Experience the magic:** [Launch Interactive Demo](https://your-demo-link-here.com)
+**Experience the magic:** Simply open the project, allow camera access, and wave your hand to control the particles!
 
-Simply allow camera access and use your hand to control 20,000+ particles in real-time!
+```bash
+# Clone and run locally for best experience
+git clone https://github.com/Mudasir345/interactive-3d-particals.git
+npm install && npm run dev
+```
+
+> 💡 **Tip:** Works best on Chrome/Edge with a webcam. Mobile devices supported with adaptive performance!
 
 ---
 
@@ -73,7 +96,7 @@ Styling:      CSS3 with backdrop-filter effects
 
 ```bash
 # Clone the repository
-git clone https://github.com/Mudasir345/interactive-particle-system.git
+git clone https://github.com/Mudasir345/interactive-3d-particals.git
 
 # Navigate to project
 cd interactive-particle-system
@@ -129,15 +152,28 @@ public/
 
 ---
 
-## 💡 Innovation Highlights
+## 🏆 What Makes This Project Special
 
-🔹 **Computer Vision Integration** - Leverages Google's MediaPipe for accurate hand tracking without backend
+### 💡 Innovation Highlights
 
-🔹 **Real-time Physics** - Custom particle physics engine with force vectors and smooth interpolation
+🔹 **AI-Powered Hand Tracking** — Google's MediaPipe runs entirely in the browser via WebAssembly
 
-🔹 **Adaptive Performance** - Device capability detection for optimal FPS across all platforms
+🔹 **Physics-Based Particle System** — Custom force calculations with distance falloff algorithms
 
-🔹 **Zero External Dependencies** - Pure frontend implementation, no server required
+🔹 **Real-time Shape Morphing** — Seamless transitions between 5 mathematical 3D shapes
+
+🔹 **Adaptive Performance Engine** — Auto-detects device capability and optimizes particle count (8K-20K)
+
+🔹 **Pure Frontend Architecture** — No backend required, runs entirely client-side
+
+### 🎨 Technical Achievements
+
+- ✅ Handles **20,000 particles at 60 FPS** on desktop
+- ✅ **Sub-16ms frame time** with physics calculations
+- ✅ **Responsive across 3 device tiers** (Mobile/Tablet/Desktop)
+- ✅ **5 simultaneous gesture detections** with conflict resolution
+- ✅ **Memory-optimized** Float32 arrays for particle data
+- ✅ **Zero external API dependencies** — fully self-contained
 
 ---
 
