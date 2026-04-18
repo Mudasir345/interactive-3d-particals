@@ -35,10 +35,18 @@ Passionate about building **interactive web experiences** that blend cutting-edg
 
 ## 🚀 Live Demo
 
-**Experience the magic:** Simply open the project, allow camera access, and wave your hand to control the particles!
+<p align="center">
+  <a href="https://interactive3dparticals.netlify.app/" target="_blank">
+    <img src="https://img.shields.io/badge/🚀_Launch_Live_Demo-00C7B7?style=for-the-badge&logo=netlify&logoColor=white" alt="Live Demo" />
+  </a>
+</p>
+
+**🌐 Try it now:** https://interactive3dparticals.netlify.app/
+
+Simply allow camera access and wave your hand to control 20,000+ particles in real-time!
 
 ```bash
-# Clone and run locally for best experience
+# Or run locally for development
 git clone https://github.com/Mudasir345/interactive-3d-particals.git
 npm install && npm run dev
 ```
