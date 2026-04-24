@@ -10,25 +10,75 @@ const loadingText = document.getElementById('loading-text');
 function getDeviceProfile() {
     const width = window.innerWidth;
     const height = window.innerHeight;
+    const aspect = width / Math.max(height, 1);
     const pixelRatio = window.devicePixelRatio || 1;
+    const cores = navigator.hardwareConcurrency || 4;
+    const memory = navigator.deviceMemory || 4;
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isMobile = width < 768 || (isTouch && width < 1024);
+    const isTablet = !isMobile && width < 1180;
+    const isPortrait = height > width;
+    const area = width * height;
+    let performanceTier = 'high';
 
-    // Determine particle count based on device capability
-    let particleCount = 20000; // Default high-end
-    let cameraZ = 15; // Default desktop
-
-    if (isMobile || width < 600) {
-        // Mobile / Small screens
-        particleCount = 8000;
-        cameraZ = 10; // Closer camera for smaller screens
-    } else if (width < 1024 || pixelRatio > 2) {
-        // Tablet / Mid-range
-        particleCount = 12000;
-        cameraZ = 12;
+    if (isMobile || memory <= 4 || cores <= 4) {
+        performanceTier = 'low';
+    } else if (isTablet || pixelRatio > 2 || memory <= 6) {
+        performanceTier = 'medium';
+    } else if (area > 2500000 && cores >= 8 && memory >= 8) {
+        performanceTier = 'ultra';
     }
 
-    return { particleCount, cameraZ, isMobile, width, height, pixelRatio };
+    let particleCount = 16000;
+    let cameraZ = 13;
+    let cameraFov = 72;
+    let maxPixelRatio = Math.min(pixelRatio, 1.8);
+    let previewScale = 1;
+
+    if (performanceTier === 'low') {
+        particleCount = isMobile ? 6500 : 8000;
+        cameraZ = isMobile ? 9.5 : 10.5;
+        cameraFov = isMobile ? 82 : 78;
+        maxPixelRatio = Math.min(pixelRatio, 1.2);
+        previewScale = isMobile ? 0.82 : 0.9;
+    } else if (performanceTier === 'medium') {
+        particleCount = isTablet ? 11000 : 12000;
+        cameraZ = isTablet ? 11.2 : 12;
+        cameraFov = 76;
+        maxPixelRatio = Math.min(pixelRatio, 1.5);
+        previewScale = isTablet ? 0.95 : 0.9;
+    } else if (performanceTier === 'ultra') {
+        particleCount = 22000;
+        cameraZ = 14.5;
+        cameraFov = 70;
+        maxPixelRatio = Math.min(pixelRatio, 2);
+        previewScale = 1.02;
+    }
+
+    if (isMobile && isPortrait) {
+        cameraZ += 1.4;
+        cameraFov = Math.min(88, cameraFov + 2);
+        previewScale *= 0.88;
+    } else if (isTablet && isPortrait) {
+        cameraZ += 0.8;
+        cameraFov = Math.min(84, cameraFov + 1);
+    }
+
+    return {
+        particleCount,
+        cameraZ,
+        cameraFov,
+        aspect,
+        isMobile,
+        isTablet,
+        isPortrait,
+        width,
+        height,
+        pixelRatio,
+        maxPixelRatio,
+        performanceTier,
+        previewScale
+    };
 }
 
 const deviceProfile = getDeviceProfile();
@@ -38,24 +88,22 @@ const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x000000, 0.02);
 
 // Camera with responsive position
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(deviceProfile.cameraFov, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = deviceProfile.cameraZ;
 
 // Renderer
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: deviceProfile.performanceTier !== 'low',
+  alpha: true,
+  powerPreference: 'high-performance'
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(deviceProfile.maxPixelRatio);
 
 // --- System Modules ---
 const particles = new ParticleSystem(scene, deviceProfile.particleCount, deviceProfile);
-const handInput = new HandInput();
-
-// Handle interaction mapping fix
-// ParticleSystem expects 'Thumb_Up' for Saturn, HandInput returns 'Rock'. Let's align them.
-// Actually, let's just update the ParticleSystem to check for 'Rock' in the loop below or inside it.
-// We'll trust ParticleSystem's updated logic if we modify it, or we handle it here.
-// NOTE: I will quickly patch ParticleSystem.js to accept 'Rock' for Saturn in the update loop inside the class. 
-// OR simpler: Map 'Rock' to 'Thumb_Up' equivalent behavior.
+const handInput = new HandInput(deviceProfile);
 
 // --- Main Loop ---
 const clock = new THREE.Clock();
@@ -79,17 +127,6 @@ function animate() {
 
   handInput.update();
 
-  // Map specific gesture strings to ensure compatibility
-  if (handInput.gesture === 'Rock') {
-    // Force mapping if needed, or rely on internal check
-    // We will update ParticleSystem logic directly in the next tool call if needed, 
-    // but for now let's hope 'Rock' gesture logic in HandInput aligns with ParticleSystem.
-    // Wait, ParticleSystem checks for 'Thumb_Up'. I should change ParticleSystem to 'Rock' 
-    // or 'Saturn' gesture. Let's do a quick fix in logic here? 
-    // Ideally logic belongs in ParticleSystem. Let's send a property 'gesture' that matches what ParticleSystem expects.
-  }
-
-  // Pass normalized data with velocity, rotation, finger count and burst
   particles.update(dt, {
     detected: handInput.detected,
     x: handInput.x,
@@ -98,27 +135,35 @@ function animate() {
     velocityY: handInput.velocityY,
     rotationAngle: handInput.rotationAngle,
     fingerCount: handInput.fingerCount,
+    fingerSignature: handInput.fingerSignature,
     burstDetected: handInput.burstDetected,
     pinchDistance: handInput.pinchDistance,
-    gesture: handInput.gesture === 'Rock' ? 'Thumb_Up' : handInput.gesture // Remap for compatibility
+    gesture: handInput.gesture
   });
 
   renderer.render(scene, camera);
 }
 
 // --- Resize Handler ---
-window.addEventListener('resize', () => {
-  // Update camera aspect
-  camera.aspect = window.innerWidth / window.innerHeight;
+let resizeFrame = 0;
+
+function syncViewport() {
+  const nextProfile = getDeviceProfile();
+
+  camera.aspect = nextProfile.width / nextProfile.height;
+  camera.fov = nextProfile.cameraFov;
+  camera.position.z = nextProfile.cameraZ;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(nextProfile.width, nextProfile.height);
+  renderer.setPixelRatio(nextProfile.maxPixelRatio);
 
-  // Recalculate device profile and update camera position
-  const newProfile = getDeviceProfile();
-  camera.position.z = newProfile.cameraZ;
+  particles.updateResponsiveScale(nextProfile);
+  handInput.updateResponsiveLayout(nextProfile);
+}
 
-  // Update particle system responsive scale
-  particles.updateResponsiveScale(newProfile);
+window.addEventListener('resize', () => {
+  cancelAnimationFrame(resizeFrame);
+  resizeFrame = requestAnimationFrame(syncViewport);
 });
 
 start();
